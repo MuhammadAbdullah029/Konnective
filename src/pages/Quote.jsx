@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
+import emailjs from '@emailjs/browser';
 import { useForm } from 'react-hook-form'
 import { 
   CheckCircle, 
@@ -19,11 +20,31 @@ const Quote = () => {
 
   const totalSteps = 4
 
-  const onSubmit = (data) => {
-    console.log(data)
-    setIsSubmitted(true)
-    reset()
+  const formRef = useRef();
+
+ const onSubmit = (data) => {
+  if (Array.isArray(data.services)) {
+    data.services = data.services.join(', ');
   }
+  emailjs
+    .sendForm(
+      'service_o94t3mc',
+      'template_nncr0hh',
+      formRef.current,
+      'yBH9UcZpErfjd9fdI'
+    )
+    .then(
+      (result) => {
+        console.log(result.text);
+        setIsSubmitted(true);
+        reset();
+      },
+      (error) => {
+        console.log(error.text);
+        alert("Something went wrong.");
+      }
+    );
+};
 
   const nextStep = () => {
     if (currentStep < totalSteps) {
@@ -168,7 +189,7 @@ const Quote = () => {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
             <div className="bg-white rounded-2xl shadow-xl p-8">
               {/* Step 1: Business Information */}
               {currentStep === 1 && (
@@ -187,6 +208,7 @@ const Quote = () => {
                           First Name *
                         </label>
                         <input
+                          name="firstName"
                           type="text"
                           {...register('firstName', { required: 'First name is required' })}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#146aff]"
@@ -201,6 +223,7 @@ const Quote = () => {
                           Last Name *
                         </label>
                         <input
+                          name="lastName"
                           type="text"
                           {...register('lastName', { required: 'Last name is required' })}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#146aff]"
@@ -216,6 +239,7 @@ const Quote = () => {
                         Email Address *
                       </label>
                       <input
+                        name="email"
                         type="email"
                         {...register('email', { 
                           required: 'Email is required',
@@ -236,6 +260,7 @@ const Quote = () => {
                         Phone Number *
                       </label>
                       <input
+                        name="phone"
                         type="tel"
                         {...register('phone', { required: 'Phone number is required' })}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#146aff]"
@@ -250,6 +275,7 @@ const Quote = () => {
                         Company Name *
                       </label>
                       <input
+                        name="company"
                         type="text"
                         {...register('company', { required: 'Company name is required' })}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#146aff]"
@@ -264,6 +290,7 @@ const Quote = () => {
                         Industry *
                       </label>
                       <select
+                        name="industry"
                         {...register('industry', { required: 'Industry is required' })}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#146aff]"
                       >
@@ -288,38 +315,51 @@ const Quote = () => {
 
               {/* Step 2: Services */}
               {currentStep === 2 && (
-                <motion.div
-                  initial={{ x: 50, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -50, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <h2 className="text-3xl font-bold text-gray-900 mb-6">Which Services Do You Need?</h2>
-                  <p className="text-gray-600 mb-8">Select all services you're interested in:</p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {services.map((service) => (
-                      <label
-                        key={service.id}
-                        className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary-300 transition-colors duration-200"
-                      >
-                        <input
-                          type="checkbox"
-                          {...register('services')}
-                          value={service.id}
-                          className="sr-only"
-                        />
-                        <div className="flex items-center">
-                          <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mr-4">
-                            <service.icon className="text-primary-600" size={24} />
-                          </div>
-                          <span className="font-medium text-gray-900">{service.name}</span>
-                        </div>
-                      </label>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+  <motion.div
+    initial={{ x: 50, opacity: 0 }}
+    animate={{ x: 0, opacity: 1 }}
+    exit={{ x: -50, opacity: 0 }}
+    transition={{ duration: 0.3 }}
+  >
+    <h2 className="text-3xl font-bold text-gray-900 mb-6">Which Services Do You Need?</h2>
+    <p className="text-gray-600 mb-8">Select all services you're interested in:</p>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {services.map((service) => {
+        const selectedServices = watch('services') || [];
+        const isChecked = Array.isArray(selectedServices)
+          ? selectedServices.includes(service.id)
+          : selectedServices === service.id;
+
+        return (
+          <label
+            key={service.id}
+            className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors duration-200 ${
+              isChecked
+                ? 'border-[#146aff] bg-primary-50'
+                : 'border-gray-200 hover:border-primary-300'
+            }`}
+          >
+            <input
+              name="services"
+              type="checkbox"
+              {...register('services')}
+              value={service.id}
+              className="mr-3"
+            />
+            <div className="flex items-center">
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center mr-4 ${
+                isChecked ? 'bg-[#146aff] text-white' : 'bg-primary-100 text-primary-600'
+              }`}>
+                <service.icon size={24} />
+              </div>
+              <span className="font-medium text-gray-900">{service.name}</span>
+            </div>
+          </label>
+        );
+      })}
+    </div>
+  </motion.div>
+)}
 
               {/* Step 3: Budget & Timeline */}
               {currentStep === 3 && (
@@ -343,6 +383,7 @@ const Quote = () => {
                             className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary-300 transition-colors duration-200"
                           >
                             <input
+                              name="budget"
                               type="radio"
                               {...register('budget')}
                               value={budget.id}
@@ -365,6 +406,7 @@ const Quote = () => {
                             className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary-300 transition-colors duration-200"
                           >
                             <input
+                              name="timeframe"
                               type="radio"
                               {...register('timeframe')}
                               value={timeframe.id}
@@ -395,6 +437,7 @@ const Quote = () => {
                         What are your main business goals? *
                       </label>
                       <textarea
+                        name="goals"
                         rows={4}
                         {...register('goals', { required: 'Please describe your goals' })}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -410,6 +453,7 @@ const Quote = () => {
                         Current challenges you're facing
                       </label>
                       <textarea
+                        name="challenges"
                         rows={3}
                         {...register('challenges')}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -422,6 +466,7 @@ const Quote = () => {
                         Additional information or questions
                       </label>
                       <textarea
+                        name="additional"
                         rows={3}
                         {...register('additional')}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"

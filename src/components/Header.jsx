@@ -21,7 +21,7 @@ const Header = () => {
     { name: "About", href: "/about" },
     { name: "Pricing", href: "/pricing" },
     { name: "Services", href: "/services" },
-    { name: "Portfolio", href: "/portfolio" },
+    // { name: "Portfolio", href: "/portfolio" },
     { name: "Blog", href: "/blog" },
     { name: "Contact", href: "/contact" },
   ];
@@ -38,7 +38,7 @@ const Header = () => {
             </div>
             <div className="flex items-center space-x-2">
               <Mail size={14} />
-              <span>hello@connectiv.com</span>
+              <span>teams@connectiv.us</span>
             </div>
           </div>
           <div className="hidden md:block">

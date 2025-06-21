@@ -24,7 +24,8 @@ const Footer = () => {
   const quickLinks = [
     { name: 'About Us', href: '/about' },
     { name: 'Services', href: '/services' },
-    { name: 'Portfolio', href: '/portfolio' },
+    { name: "Pricing", href: "/pricing" },
+    // { name: 'Portfolio', href: '/portfolio' },
     { name: 'Blog', href: '/blog' },
     { name: 'Contact', href: '/contact' }
   ]
@@ -46,7 +47,7 @@ const Footer = () => {
             {/* Company Info */}
             <div className="lg:col-span-1">
               <div className="flex items-center space-x-2 mb-4">
-                <span className="text-4xl font-bold text-white fn">Konnective</span>
+                <span className="text-4xl font-bold text-white fn">Connectiv</span>
               </div>
               <p className="text-white/80 mb-6">
                 We help businesses grow by handling their complete digital presence,
@@ -111,7 +112,7 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <Mail size={18} className="text-[#17c7fb]" />
-                  <span className="text-white/80">hello@konnective.com</span>
+                  <span className="text-white/80">teams@connectiv.us</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <MapPin size={18} className="text-[#17c7fb]" />
@@ -128,7 +129,7 @@ const Footer = () => {
           <div className="container-custom py-6">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-white/70 text-sm">
-                © 2025 Konnective. All rights reserved.
+                © 2025 Connectiv. All rights reserved.
               </p>
               <div className="flex space-x-6 mt-4 md:mt-0">
                 <Link to="#" className="text-white/70 hover:text-[#17c7fb] text-sm transition-colors duration-200">

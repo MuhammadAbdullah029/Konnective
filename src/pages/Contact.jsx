@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
+import emailjs from '@emailjs/browser';
 import { useForm } from 'react-hook-form'
 import { 
   Phone, 
@@ -16,12 +17,27 @@ const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const { register, handleSubmit, formState: { errors }, reset } = useForm()
 
-  const onSubmit = (data) => {
-    console.log(data)
-    setIsSubmitted(true)
-    reset()
-    setTimeout(() => setIsSubmitted(false), 5000)
-  }
+
+  const formRef = useRef();
+
+ const onSubmit = (data) => {
+
+  emailjs.sendForm(
+    'service_o94t3mc',
+    'template_02bzb01',
+    formRef.current,
+    'yBH9UcZpErfjd9fdI'
+  )
+  .then((result) => {
+    console.log(result.text);
+   setIsSubmitted(true);
+    reset();
+  })
+  .catch((error) => {
+    console.error(error.text);
+    alert('Something went wrong!');
+  });
+};
 
   const contactInfo = [
     {
@@ -33,7 +49,7 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email',
-      details: 'hello@konnective.com',
+      details: 'teams@connectiv.us',
       description: 'We respond within 24 hours'
     },
     {
@@ -60,7 +76,7 @@ const Contact = () => {
       answer: 'We work with businesses across all industries. Our strategies are customized to fit your specific market and audience.'
     },
     {
-      question: 'What makes Konnective different from other agencies?',
+      question: 'What makes Connectiv different from other agencies?',
       answer: 'We offer complete digital marketing solutions under one roof, eliminating the need to coordinate between multiple agencies.'
     },
     {
@@ -123,13 +139,14 @@ const Contact = () => {
                     </p>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                  <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           First Name *
                         </label>
                         <input
+                          name="firstName"
                           type="text"
                           {...register('firstName', { required: 'First name is required' })}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -145,6 +162,7 @@ const Contact = () => {
                         </label>
                         <input
                           type="text"
+                          name="lastName"
                           {...register('lastName', { required: 'Last name is required' })}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
@@ -160,6 +178,7 @@ const Contact = () => {
                       </label>
                       <input
                         type="email"
+                        name="email"
                         {...register('email', { 
                           required: 'Email is required',
                           pattern: {
@@ -179,6 +198,7 @@ const Contact = () => {
                         Phone Number
                       </label>
                       <input
+                        name="phone"
                         type="tel"
                         {...register('phone')}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -191,6 +211,7 @@ const Contact = () => {
                       </label>
                       <input
                         type="text"
+                        name="company"
                         {...register('company')}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
@@ -201,6 +222,7 @@ const Contact = () => {
                         Services Interested In
                       </label>
                       <select
+                        name="service"
                         {...register('service')}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       >
@@ -218,6 +240,7 @@ const Contact = () => {
                         Message *
                       </label>
                       <textarea
+                        name="message"
                         rows={5}
                         {...register('message', { required: 'Message is required' })}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"

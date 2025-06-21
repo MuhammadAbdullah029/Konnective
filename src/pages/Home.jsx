@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { motion } from 'framer-motion'
+import emailjs from '@emailjs/browser';
 import { Link } from 'react-router-dom'
-import { 
-  ArrowRight, 
-  CheckCircle, 
+import {
+  ArrowRight,
+  CheckCircle,
   Star,
   TrendingUp,
   Users,
@@ -13,6 +14,24 @@ import {
 import { services, stats, testimonials } from '../data/Data'
 
 const Home = () => {
+
+  const form = useRef();
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs.sendForm('service_o94t3mc', 'template_02bzb01', form.current, 'yBH9UcZpErfjd9fdI')
+      .then((result) => {
+        console.log(result.text);
+        alert('Email Sent!');
+      }, (error) => {
+        console.log(error.text);
+        alert('Failed to send email.');
+      });
+
+    e.target.reset();
+  };
+
 
 
   return (
@@ -36,7 +55,7 @@ const Home = () => {
                 <span className="gradient-text block fn py-4">Complete Digital Solutions</span>
               </h1>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                We handle your entire digital presence so you can focus on running your business stress-free. 
+                We handle your entire digital presence so you can focus on running your business stress-free.
                 From social media to websites, SEO to cold calling - we've got you covered.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -49,7 +68,7 @@ const Home = () => {
                 </Link>
               </div>
             </motion.div>
-            
+
             <motion.div
               initial={{ x: 50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -62,30 +81,41 @@ const Home = () => {
                     <h3 className="text-2xl font-bold gradient-text mb-2 fn">Ready to Get Started?</h3>
                     <p className="text-gray-600">Get your free digital marketing audit</p>
                   </div>
-                  <form className="space-y-4">
+
+                  <form ref={form} onSubmit={sendEmail} className="space-y-4">
                     <input
                       type="text"
+                      name="name"
                       placeholder="Your Name"
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all"
+                      required
                     />
                     <input
                       type="email"
+                      name="email"
                       placeholder="Email Address"
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all"
+                      required
                     />
                     <input
                       type="tel"
+                      name="phone"
                       placeholder="Phone Number"
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all"
                     />
-                    <select className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all">
-                      <option>Select Service Interest</option>
-                      <option>Social Media Marketing</option>
-                      <option>Website Development</option>
-                      <option>SEO & Google Marketing</option>
-                      <option>Cold Calling</option>
-                      <option>Complete Digital Package</option>
+                    <select
+                      name="service"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all"
+                      required
+                    >
+                      <option value="">Select Service Interest</option>
+                      <option value="Social Media Marketing">Social Media Marketing</option>
+                      <option value="Website Development">Website Development</option>
+                      <option value="SEO & Google Marketing">SEO & Google Marketing</option>
+                      <option value="Cold Calling">Cold Calling</option>
+                      <option value="Complete Digital Package">Complete Digital Package</option>
                     </select>
+
                     <button type="submit" className="w-full btn-primary justify-center">
                       Get Free Audit
                     </button>
@@ -131,7 +161,7 @@ const Home = () => {
               Complete <span className="gradient-text fn">Digital Marketing</span> Solutions
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We offer everything you need to establish and grow your digital presence. 
+              We offer everything you need to establish and grow your digital presence.
               No need to juggle multiple agencies - we handle it all.
             </p>
           </motion.div>
